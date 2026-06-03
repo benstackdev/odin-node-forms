@@ -44,26 +44,21 @@ const validateUser = [
     .isLength({ max: 200 }).withMessage(bioLengthError)
 ];
 
-// Create new user (POST)
-
-const usersCreatePost = [
-  validateUser,
-  (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    // If there are errors in the form, print them
-    if (!errors.isEmpty()) {
-      return res.status(400).render("createUser", {
-        title: "Create user",
-        errors: errors.array()
-      });
-    }
-
-    // Otherwise, create user and redirect
-    const { firstName, lastName, age, email, bio } = matchedData(req);
-    usersData.addUser(firstName, lastName, age, email, bio);
-    res.redirect("/");
+// Create new user
+const usersCreatePost = (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  // If there are errors in the form, print them
+  if (!errors.isEmpty()) {
+    return res.status(400).render("createUser", {
+      title: "Create user",
+      errors: errors.array()
+    });
   }
-];
+
+  // Otherwise, create user and redirect
+  usersData.addUser(req.body.firstName, req.body.lastName, req.body.age, req.body.email, req.body.bio);
+  res.redirect("/");
+};
 
 // Update existing user
 const usersUpdateGet = (req: Request, res: Response) => {
@@ -74,26 +69,25 @@ const usersUpdateGet = (req: Request, res: Response) => {
   });
 };
 
-const usersUpdatePost = [
-  validateUser,
-  (req: Request, res: Response) => {
-    const user = usersData.getUser(req.params.id as string);
-    const errors = validationResult(req);
-    // If there are errors in the form, print them
-    if (!errors.isEmpty()) {
-      return res.status(400).render("createUser", {
-        title: "Create user",
-        user: user,
-        errors: errors.array()
-      });
-    }
-
-    // Otherwise, create user and redirect
-    const { firstName, lastName, age, email, bio } = matchedData(req);
-    usersData.updateUser(req.params.id as string, firstName, lastName, age, email, bio);
-    res.redirect("/");
+const usersUpdatePost = (req: Request, res: Response) => {
+  const user = usersData.getUser(req.params.id as string);
+  const errors = validationResult(req);
+  // If there are errors in the form, print them
+  if (!errors.isEmpty()) {
+    res.status(400).render("createUser", {
+      title: "Create user",
+      user: user,
+      errors: errors.array()
+    });
+    return;
   }
-];
+
+  // Otherwise, create user and redirect
+  const { firstName, lastName, age, email, bio } = matchedData(req);
+  usersData.updateUser(req.params.id as string, firstName, lastName, age, email, bio);
+  res.redirect("/");
+  return;
+};
 
 // Delete user by ID
 const usersDeletePost = (req: Request, res: Response) => {
@@ -102,6 +96,7 @@ const usersDeletePost = (req: Request, res: Response) => {
 };
 
 export {
+  validateUser,
   usersListGet,
   usersCreateGet,
   usersCreatePost,
