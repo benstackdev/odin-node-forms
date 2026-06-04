@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%= title %>
+  </title>
+</head>
+
+<body>
+  <h1>
+    <%= title %>
+  </h1>
+  <%- include("./partials/errors.ejs") %>
+    <form action="/search" method="POST">
+      <label for="searchTerms">Search: </label>
+      <!-- Type of input is search... good for a11y -->
+      <input type="search" name="searchTerms" id="searchTerms" value="" required>
+      <br>
+      <br>
+      <button type="submit">Search</button>
+    </form>
+    <% if (locals.searchResults) { %>
+      <ul>
+        <% if (searchResults.length> 0) {%>
+          <% searchResults.forEach((user)=> { %>
+            <li>
+              <div class="user-id">ID: <%= user.id %>
+              </div>
+              <div class="user-id">First name: <%= user.firstName %>
+              </div>
+              <div class="user-id">Last name: <%= user.lastName %>
+              </div>
+              <div class="user-id">age: <%= user.age %>
+              </div>
+              <div class="user-id">email: <%= user.email %>
+              </div>
+              <div class="user-id">bio: <%= user.bio %>
+              </div>
+            </li>
+            <% }); %>
+              <% } else { %>
+                <p>No results.</p>
+                <% } %>
+      </ul>
+      <% } %>
+        <a href="/">Back to user list</a>
+</body>
+
+</html>

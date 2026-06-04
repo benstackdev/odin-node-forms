@@ -7,11 +7,21 @@ export type UserType = {
   bio: string;
 };
 
+const dummyUser: UserType = {
+  id: crypto.randomUUID(),
+  firstName: "Ben",
+  lastName: "Stack",
+  age: 25,
+  email: "ben@stack.com",
+  bio: ""
+};
+
 class UserStorage {
   userData: Map<string, UserType>;
 
   constructor() {
     this.userData = new Map();
+    this.userData.set(dummyUser.id as string, dummyUser);
   }
 
   addUser(newUser: UserType) {

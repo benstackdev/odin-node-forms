@@ -50,6 +50,13 @@ const validateUser = [
     .isLength({ max: 200 }).withMessage(bioLengthError)
 ];
 
+const validateSearch = [
+  body("searchTerm")
+    .trim()
+    .isLength({ min: 3, max: 200 })
+    .toLowerCase()
+];
+
 // Create new user
 const usersCreatePost = (req: Request, res: Response) => {
   try {
@@ -131,12 +138,50 @@ const usersDeletePost = (req: Request, res: Response) => {
   }
 };
 
+// Search for user by either first name, last name, and/or email
+const usersSearchGet = (req: Request, res: Response) => {
+  try {
+    res.render("search", {
+      title: "Search for a user"
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+
+const usersSearchPost = (req: Request, res: Response) => {
+  try {
+    const usersIds = usersData.getAllUsers().keys();
+    const searchResults: UserType[] = usersIds.reduce((acc: UserType[], userId) => {
+      const user = usersData.getUser(userId);
+      if (user.firstName.includes(req.body.searchTerms) ||
+        user.lastName.includes(req.body.searchTerms) ||
+        user.email.includes(req.body.searchTerms)) {
+        console.log(req.body.searchTerms);
+        acc.push(user);
+      }
+      return acc;
+    }, []);
+
+    res.render("search", {
+      title: "Search for user",
+      searchResults: searchResults
+    });
+
+  } catch (err) {
+    throw err;
+  }
+};
+
 export {
   validateUser,
+  validateSearch,
   usersListGet,
   usersCreateGet,
   usersCreatePost,
   usersUpdateGet,
   usersUpdatePost,
-  usersDeletePost
+  usersDeletePost,
+  usersSearchGet,
+  usersSearchPost
 };
