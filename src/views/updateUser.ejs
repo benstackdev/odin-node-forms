@@ -17,14 +17,20 @@
     <form action="/<%= user.id %>/update" method="POST">
       <label for="firstName">*First name: </label>
       <input type="text" name="firstName" id="firstName" value="<%= user.firstName %>" required>
+      <br>
       <label for="lastName">*Last name: </label>
       <input type="text" name="lastName" id="lastName" value="<%= user.lastName %>" required>
+      <br>
       <label for="age">Age: </label>
       <input type="number" name="age" id="age" value="<%= user.age%>">
+      <br>
       <label for="email">*Email: </label>
       <input type="email" name="email" id="email" value="<%= user.email %>" required>
+      <br>
       <label for="bio">Brief bio: </label>
-      <textarea name="bio" id="bio" value="<%= user.bio %>"></textarea>
+      <textarea name="bio" id="bio"><%= user.bio %></textarea>
+      <br>
+      <br>
       <button type="submit">Update user</button>
     </form>
     <a href="/">Back to user list</a>

@@ -1,5 +1,5 @@
 export type UserType = {
-  id: string;
+  id?: string,
   firstName: string,
   lastName: string,
   age: number,
@@ -8,21 +8,15 @@ export type UserType = {
 };
 
 class UserStorage {
-  userData: UserType[];
+  userData: Map<string, UserType>;
 
   constructor() {
-    this.userData = [];
+    this.userData = new Map();
   }
 
-  addUser(firstName: string, lastName: string, age: number, email: string, bio: string, id?: string) {
-    this.userData.push({
-      id: id ?? crypto.randomUUID(),
-      firstName: firstName,
-      lastName: lastName,
-      age: age,
-      email: email,
-      bio: bio
-    });
+  addUser(newUser: UserType) {
+    const newId = crypto.randomUUID();
+    this.userData.set(newId, { id: newId, ...newUser });
   }
 
   getAllUsers() {
@@ -30,24 +24,17 @@ class UserStorage {
   }
 
   getUser(id: string) {
-    return this.userData.find((user) => user.id === id);
+    if (this.userData.has(id)) return this.userData.get(id)!;
+    throw new Error(`User with ${id} does not exist`);
   }
 
-  updateUser(id: string, firstName?: string, lastName?: string, age?: number, email?: string, bio?: string) {
+  updateUser(id: string, newData: Partial<UserType>) {
     const currentUser = this.getUser(id);
-    this.deleteUser(id);
-
-    if (currentUser) {
-      this.addUser(firstName ?? currentUser.firstName, lastName ?? currentUser.lastName, age ?? currentUser.age, email ?? currentUser.email, bio ?? currentUser.bio, currentUser.id);
-
-      return true;
-    }
-
-    return false;
+    this.userData.set(id, { ...currentUser, ...newData });
   }
 
   deleteUser(id: string) {
-    this.userData.filter((user) => user.id !== id);
+    this.userData.delete(id);
   }
 }
 
